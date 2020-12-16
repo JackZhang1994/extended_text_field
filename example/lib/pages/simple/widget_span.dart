@@ -3,6 +3,7 @@ import 'package:example/special_text/my_special_text_span_builder.dart';
 import 'package:extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
+import 'package:flutter/services.dart';
 
 ///
 ///  create by zmtzawqlp on 2019/8/4
@@ -30,10 +31,14 @@ class _WidgetSpanDemoState extends State<WidgetSpanDemo> {
             '\n\nIt\'s my pleasure to invite you to join \$FlutterCandies\$ if you want to improve flutter .[36]'
             '\n\nif you meet any problem, please let me konw @zmtzawqlp .[44]';
   EmailSpanBuilder _emailSpanBuilder;
+
+  FocusNode _focusNode;
+
   @override
   void initState() {
     _emailSpanBuilder = EmailSpanBuilder(controller, context);
     super.initState();
+    _focusNode = FocusNode();
   }
 
   @override
@@ -50,6 +55,19 @@ class _WidgetSpanDemoState extends State<WidgetSpanDemo> {
       ),
       body: Column(
         children: <Widget>[
+          FlatButton(
+            onPressed: () {
+              SystemChannels.textInput.invokeMethod<void>('TextInput.show');
+            },
+            child: Text('打开键盘'),
+          ),
+          FlatButton(
+            onPressed: () {
+              _focusNode.unfocus();
+              SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+            },
+            child: Text('关闭键盘'),
+          ),
           Row(
             children: <Widget>[
               Container(
@@ -142,6 +160,7 @@ class _WidgetSpanDemoState extends State<WidgetSpanDemo> {
           const Divider(),
           Expanded(
             child: ExtendedTextField(
+              focusNode: _focusNode,
               controller: controller2,
               maxLines: null,
               specialTextSpanBuilder: MySpecialTextSpanBuilder(),
